@@ -5,6 +5,7 @@ import cors from 'cors';
 import { handleApplicationErrors } from '@/middlewares';
 import { usersRouter, authenticationRouter, eventsRouter, enrollmentsRouter } from '@/routers';
 import { loadEnv, connectDb, disconnectDB } from '@/config';
+import { ticketsRouter } from './routers/tickets-router';
 
 loadEnv();
 
@@ -17,6 +18,7 @@ app
   .use('/auth', authenticationRouter)
   .use('/event', eventsRouter)
   .use('/enrollments', enrollmentsRouter)
+  .use('/tickets', ticketsRouter)
   .use(handleApplicationErrors);
 
 export function init(): Promise<Express> {
