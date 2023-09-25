@@ -86,6 +86,24 @@ export function handleApplicationErrors(
     });
   }
 
+  if (err.name === 'IncompletePaymentInformationError') {
+    return res.status(httpStatus.BAD_REQUEST).send({
+      message: err.message,
+    });
+  }
+
+  if (err.name === 'TicketIdNotExistsError') {
+    return res.status(httpStatus.NOT_FOUND).send({
+      message: err.message,
+    });
+  }
+
+  if (err.name === 'UserHasNoTicketIdError') {
+    return res.status(httpStatus.UNAUTHORIZED).send({
+      message: err.message,
+    });
+  }
+
   if (err.hasOwnProperty('status') && err.name === 'RequestError') {
     return res.status((err as RequestError).status).send({
       message: err.message,
