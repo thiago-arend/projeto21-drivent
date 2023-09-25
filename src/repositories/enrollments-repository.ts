@@ -1,4 +1,4 @@
-import { Enrollment, Prisma } from '@prisma/client';
+import { Enrollment } from '@prisma/client';
 import { prisma } from '@/config';
 
 async function findWithAddressByUserId(userId: number) {
