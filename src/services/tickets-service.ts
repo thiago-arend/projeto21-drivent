@@ -1,12 +1,7 @@
 import { Ticket, TicketStatus, TicketType } from '@prisma/client';
-import { cannotBuyMoreThanOneTicketError } from '@/errors/cannot-buy-more-than-one-ticket-error';
-import { cannotBuyTicketIfEnrollmentNotExistsError } from '@/errors/cannot-buy-ticket-if-enrollment-not-exists-error';
-import { cannotGetTicketIfEnrollmentNotExistsError } from '@/errors/cannot-get-ticket-if-enrollment-not-exists-error';
-import { missingTicketTypeIdError } from '@/errors/missing-ticket-type-id';
-import { userHasNoTicketError } from '@/errors/user-has-no-ticket-error';
 import { CreateTicket, TicketAndType } from '@/protocols';
-import { enrollmentRepository } from '@/repositories';
-import { ticketsRepository } from '@/repositories/tickets-repository';
+import { cannotBuyMoreThanOneTicketError, cannotBuyTicketIfEnrollmentNotExistsError, cannotGetTicketIfEnrollmentNotExistsError, missingTicketTypeIdError, userHasNoTicketError } from '@/errors';
+import { enrollmentRepository, ticketsRepository } from '@/repositories';
 
 async function getTicketsTypes(): Promise<TicketType[]> {
   const ticketsTypes = await ticketsRepository.getTicketsTypes();

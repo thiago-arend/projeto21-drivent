@@ -1,10 +1,7 @@
 import { Payment } from '@prisma/client';
-import { incompletePaymentInformationError } from '@/errors/incomplete-payments-information-error';
-import { ticketIdNotExistsError } from '@/errors/ticket-id-not-exists-error';
 import { CreatePayment, PaymentBody } from '@/protocols';
-import { paymentRepository } from '@/repositories/payments-repository';
-import { ticketsRepository } from '@/repositories/tickets-repository';
-import { userHasNoTicketIdError } from '@/errors/user-has-no-ticket-id-error';
+import { incompletePaymentInformationError, ticketIdNotExistsError, userHasNoTicketIdError } from '@/errors';
+import { paymentRepository, ticketsRepository } from '@/repositories';
 
 async function create(paymentBody: PaymentBody, userId: number): Promise<Payment> {
   const { ticketId, cardData } = paymentBody;

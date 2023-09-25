@@ -24,7 +24,7 @@ async function get(req: AuthenticatedRequest, res: Response): Promise<void> {
   const { userId } = req;
 
   const ticket = await ticketsService.getTicketByUserId(userId);
-  res.status(200).send(ticket);
+  res.status(httpStatus.OK).send(ticket);
 }
 
 export const ticketsController = { getTicketsTypes, create, get };
