@@ -7,31 +7,31 @@ import { ticketsRepository } from '@/repositories/tickets-repository';
 import { userHasNoTicketIdError } from '@/errors/user-has-no-ticket-id-error';
 
 async function create(paymentBody: PaymentBody, userId: number): Promise<Payment> {
-    const { ticketId, cardData } = paymentBody;
+  const { ticketId, cardData } = paymentBody;
 
-    if (!ticketId || !cardData) throw incompletePaymentInformationError();
-    if (!(await ticketsRepository.getTicketById(ticketId))) throw ticketIdNotExistsError();
-    if (!(await ticketsRepository.getTicketByIdAndUserId(ticketId, userId))) throw userHasNoTicketIdError();
+  if (!ticketId || !cardData) throw incompletePaymentInformationError();
+  if (!(await ticketsRepository.getTicketById(ticketId))) throw ticketIdNotExistsError();
+  if (!(await ticketsRepository.getTicketByIdAndUserId(ticketId, userId))) throw userHasNoTicketIdError();
 
-    await ticketsRepository.updateStatusToPaid(ticketId);
+  await ticketsRepository.updateStatusToPaid(ticketId);
 
-    const createPayment: CreatePayment = {
-        ticketId,
-        value: await ticketsRepository.getValueForPaymentByTicketId(ticketId),
-        cardIssuer: cardData.issuer,
-        cardLastDigits: cardData.number.toString().slice(-4),
-    };
+  const createPayment: CreatePayment = {
+    ticketId,
+    value: await ticketsRepository.getValueForPaymentByTicketId(ticketId),
+    cardIssuer: cardData.issuer,
+    cardLastDigits: cardData.number.toString().slice(-4),
+  };
 
-    return await paymentRepository.create(createPayment);
+  return await paymentRepository.create(createPayment);
 }
 
 async function getByTicketId(ticketId: number, userId: number): Promise<Payment> {
-    if (!ticketId) throw incompletePaymentInformationError();
-    if (!(await ticketsRepository.getTicketById(ticketId))) throw ticketIdNotExistsError();
-    if (!(await ticketsRepository.getTicketByIdAndUserId(ticketId, userId))) throw userHasNoTicketIdError();
+  if (!ticketId) throw incompletePaymentInformationError();
+  if (!(await ticketsRepository.getTicketById(ticketId))) throw ticketIdNotExistsError();
+  if (!(await ticketsRepository.getTicketByIdAndUserId(ticketId, userId))) throw userHasNoTicketIdError();
 
-    const payment = await paymentRepository.getByTicketId(ticketId);
-    return payment;
+  const payment = await paymentRepository.getByTicketId(ticketId);
+  return payment;
 }
 
 export const paymentsService = { create, getByTicketId };

@@ -53,7 +53,7 @@ async function getTicketByIdAndUserId(id: number, userId: number): Promise<Ticke
         JOIN "Enrollment" e ON t."enrollmentId"=e.id
         JOIN "User" u ON e."userId"=u.id
         WHERE u.id=${userId} AND t.id=${id};
-    `
+    `,
   );
 
   return tickets[0];
@@ -62,7 +62,7 @@ async function getTicketByIdAndUserId(id: number, userId: number): Promise<Ticke
 async function updateStatusToPaid(id: number): Promise<void> {
   await prisma.ticket.update({
     where: { id },
-    data: {status: TicketStatus.PAID}
+    data: { status: TicketStatus.PAID },
   });
 }
 
