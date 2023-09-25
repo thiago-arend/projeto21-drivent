@@ -8,5 +8,6 @@ ticketsRouter
     .all('/*', authenticateToken)
     .get('/types', ticketsController.getTicketsTypes)
     .post('/', ticketsController.create)
+    .get('/', ticketsController.get)
 
 export { ticketsRouter };

@@ -20,7 +20,10 @@ async function create(ticket: CreateTicket): Promise<TicketAndType> {
 
 async function getTicketByEnrollmentId(id: number): Promise<Ticket> {
     const ticket = await prisma.ticket.findUnique({
-        where: { enrollmentId: id }
+        where: { enrollmentId: id },
+        include: {
+            TicketType: true
+        }
     });
 
     return ticket;

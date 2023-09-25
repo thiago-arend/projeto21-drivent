@@ -1,10 +1,12 @@
 import { cannotBuyMoreThanOneTicketError } from "@/errors/cannot-buy-more-than-one-ticket-error";
 import { cannotBuyTicketIfEnrollmentNotExistsError } from "@/errors/cannot-buy-ticket-if-enrollment-not-exists-error";
+import { cannotGetTicketIfEnrollmentNotExistsError } from "@/errors/cannot-get-ticket-if-enrollment-not-exists-error";
 import { missingTicketTypeIdError } from "@/errors/missing-ticket-type-id";
+import { userHasNoTicketError } from "@/errors/user-has-no-ticket-error";
 import { CreateTicket, TicketAndType } from "@/protocols";
 import { enrollmentRepository } from "@/repositories";
 import { ticketsRepository } from "@/repositories/tickets-repository";
-import { TicketStatus, TicketType } from "@prisma/client";
+import { Ticket, TicketStatus, TicketType } from "@prisma/client";
 
 async function getTicketsTypes(): Promise<TicketType[]> {
     const ticketsTypes = await ticketsRepository.getTicketsTypes();
@@ -17,7 +19,8 @@ async function create(ticketTypeId: number, userId: number): Promise<TicketAndTy
     const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
     if (!enrollment) throw cannotBuyTicketIfEnrollmentNotExistsError();
 
-    if (await userEnrollmentHasTicketAlready(enrollment.id)) throw cannotBuyMoreThanOneTicketError();
+    const ticket = await ticketsRepository.getTicketByEnrollmentId(enrollment.id);
+    if (ticket) throw cannotBuyMoreThanOneTicketError();
 
     const createTicket: CreateTicket = {
         ticketTypeId,
@@ -28,11 +31,14 @@ async function create(ticketTypeId: number, userId: number): Promise<TicketAndTy
     return await ticketsRepository.create(createTicket);
 }
 
-async function userEnrollmentHasTicketAlready(enrollmenetId: number): Promise<boolean> {
-    const ticketExists = await ticketsRepository.getTicketByEnrollmentId(enrollmenetId);
+async function getTicketByUserId(userId: number): Promise<Ticket> {
+    const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
+    if (!enrollment) throw cannotGetTicketIfEnrollmentNotExistsError();
 
-    if (ticketExists) return true;
-    else return false;
+    const ticket = await ticketsRepository.getTicketByEnrollmentId(enrollment.id);
+    if (!ticket) throw userHasNoTicketError();
+
+    return ticket;
 }
 
-export const ticketsService = { getTicketsTypes, create };
+export const ticketsService = { getTicketsTypes, create, getTicketByUserId };

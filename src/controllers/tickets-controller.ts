@@ -20,4 +20,11 @@ async function create(req: AuthenticatedRequest, res: Response): Promise<void> {
     res.status(httpStatus.CREATED).send(ticketAndType);
 }
 
-export const ticketsController = { getTicketsTypes, create };
+async function get(req: AuthenticatedRequest, res: Response): Promise<void> {
+    const { userId } = req;
+
+    const ticket = await ticketsService.getTicketByUserId(userId);
+    res.status(200).send(ticket);
+}
+
+export const ticketsController = { getTicketsTypes, create, get };
