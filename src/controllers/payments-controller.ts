@@ -1,25 +1,21 @@
 import { Response } from 'express';
 import httpStatus from 'http-status';
 import { AuthenticatedRequest } from '@/middlewares';
-import { PaymentBody } from '@/protocols';
-import { paymentsService } from '@/services/payments-service';
+import { InputPaymentBody } from '@/protocols';
+import { paymentsService } from '@/services';
 
-async function create(req: AuthenticatedRequest, res: Response): Promise<void> {
-  const paymentBody = req.body as PaymentBody;
+export async function getPaymentByTicketId(req: AuthenticatedRequest, res: Response) {
+  const ticketId = Number(req.query.ticketId);
+  const { userId } = req;
 
-  const payment = await paymentsService.create(paymentBody, req.userId);
-  res.status(httpStatus.OK).send(payment);
+  const payment = await paymentsService.getPaymentByTicketId(userId, ticketId);
+  return res.status(httpStatus.OK).send(payment);
 }
 
-type TicketId = {
-  ticketId: string;
-};
+export async function paymentProcess(req: AuthenticatedRequest, res: Response) {
+  const { userId } = req;
+  const { ticketId, cardData } = req.body as InputPaymentBody;
 
-async function getByTicketId(req: AuthenticatedRequest, res: Response): Promise<void> {
-  const { ticketId } = req.query as TicketId;
-
-  const payment = await paymentsService.getByTicketId(Number(ticketId), req.userId);
+  const payment = await paymentsService.paymentProcess(ticketId, userId, cardData);
   res.status(httpStatus.OK).send(payment);
 }
-
-export const paymentController = { create, getByTicketId };

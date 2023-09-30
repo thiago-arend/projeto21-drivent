@@ -1,73 +1,56 @@
-import { Prisma, Ticket, TicketStatus, TicketType } from '@prisma/client';
+import { TicketStatus } from '@prisma/client';
 import { prisma } from '@/config';
-import { CreateTicket, TicketAndType } from '@/protocols';
+import { CreateTicketParams } from '@/protocols';
 
-async function getTicketsTypes(): Promise<TicketType[]> {
-  const ticketsTypes = await prisma.ticketType.findMany();
-  return ticketsTypes;
+async function findTicketTypes() {
+  const result = await prisma.ticketType.findMany();
+  return result;
 }
 
-async function create(ticket: CreateTicket): Promise<TicketAndType> {
-  const ticketAndType = await prisma.ticket.create({
-    data: ticket,
-    include: { TicketType: true },
-  });
-
-  return ticketAndType;
-}
-
-async function getTicketByEnrollmentId(enrollmentId: number): Promise<Ticket> {
-  const ticket = await prisma.ticket.findUnique({
+async function findTicketByEnrollmentId(enrollmentId: number) {
+  const result = await prisma.ticket.findUnique({
     where: { enrollmentId },
     include: { TicketType: true },
   });
 
-  return ticket;
+  return result;
 }
 
-async function getValueForPaymentByTicketId(ticketId: number): Promise<number> {
-  const ticketAndType = await prisma.ticket.findUnique({
+async function createTicket(ticket: CreateTicketParams) {
+  const result = await prisma.ticket.create({
+    data: ticket,
+    include: { TicketType: true },
+  });
+
+  return result;
+}
+
+async function findTicketById(ticketId: number) {
+  const result = await prisma.ticket.findUnique({
     where: { id: ticketId },
     include: { TicketType: true },
   });
 
-  return ticketAndType.TicketType.price;
+  return result;
 }
 
-async function getTicketById(id: number): Promise<Ticket> {
-  const ticket = await prisma.ticket.findUnique({
-    where: { id },
+async function ticketProcessPayment(ticketId: number) {
+  const result = prisma.ticket.update({
+    where: {
+      id: ticketId,
+    },
+    data: {
+      status: TicketStatus.PAID,
+    },
   });
 
-  return ticket;
-}
-
-async function getTicketByIdAndUserId(id: number, userId: number): Promise<Ticket> {
-  const tickets = await prisma.$queryRaw<Ticket[]>(
-    Prisma.sql`
-      SELECT * FROM "Ticket" t
-        JOIN "Enrollment" e ON t."enrollmentId"=e.id
-        JOIN "User" u ON e."userId"=u.id
-        WHERE u.id=${userId} AND t.id=${id};
-    `,
-  );
-
-  return tickets[0];
-}
-
-async function updateStatusToPaid(id: number): Promise<void> {
-  await prisma.ticket.update({
-    where: { id },
-    data: { status: TicketStatus.PAID },
-  });
+  return result;
 }
 
 export const ticketsRepository = {
-  getTicketsTypes,
-  create,
-  getTicketByEnrollmentId,
-  getValueForPaymentByTicketId,
-  getTicketById,
-  updateStatusToPaid,
-  getTicketByIdAndUserId,
+  findTicketTypes,
+  findTicketByEnrollmentId,
+  createTicket,
+  findTicketById,
+  ticketProcessPayment,
 };
