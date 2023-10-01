@@ -6,7 +6,8 @@ import supertest from 'supertest';
 import {
     createUser,
     createUserWithTicket,
-    createHotelWithRooms
+    createHotelWithRooms,
+    createHotelWithRoomsReturningNestedObject
 } from '../factories';
 import { cleanDb, generateValidToken } from '../helpers';
 import app, { init } from '@/app';
@@ -166,6 +167,18 @@ describe("GET /hotels/:hotelId", () => {
             const response = await server.get(`/hotels/${Number.MAX_SAFE_INTEGER}}`).set('Authorization', `Bearer ${token}`);
 
             expect(response.status).toBe(httpStatus.PAYMENT_REQUIRED);
+        });
+
+        it("should respond with 200 and hotel with rooms", async () => {
+            const user = await createUser();
+            const token = await generateValidToken(user);
+
+            const HotelWithRooms = await createHotelWithRoomsReturningNestedObject();
+
+            const { status, body } = await server.get(`/hotels/${HotelWithRooms.id}`).set('Authorization', `Bearer ${token}`);
+
+            expect(status).toBe(httpStatus.OK);
+            expect(body).toEqual(HotelWithRooms);
         });
     });
 });
