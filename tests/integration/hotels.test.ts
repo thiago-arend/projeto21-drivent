@@ -195,35 +195,45 @@ describe('GET /hotels/:hotelId', () => {
       const userWithNone = await createUser();
       const token = await generateValidToken(userWithNone);
 
-      const response = await server.get(`/hotels/${generateRandomNumber(0, 100)}`).set('Authorization', `Bearer ${token}`);
+      const response = await server
+        .get(`/hotels/${generateRandomNumber(0, 100)}`)
+        .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(httpStatus.NOT_FOUND);
 
       const userWithOnlyHotel = await createUserWithOnlyHotel();
       const token2 = await generateValidToken(userWithOnlyHotel);
 
-      const response2 = await server.get(`/hotels/${generateRandomNumber(0, 100)}`).set('Authorization', `Bearer ${token2}`);
+      const response2 = await server
+        .get(`/hotels/${generateRandomNumber(0, 100)}`)
+        .set('Authorization', `Bearer ${token2}`);
 
       expect(response2.status).toBe(httpStatus.NOT_FOUND);
 
       const userWithOnlyEnrollmentAndTicket = await createUserWithOnlyEnrollmentAndTicket();
       const token3 = await generateValidToken(userWithOnlyEnrollmentAndTicket);
 
-      const response3 = await server.get(`/hotels/${generateRandomNumber(0, 100)}`).set('Authorization', `Bearer ${token3}`);
+      const response3 = await server
+        .get(`/hotels/${generateRandomNumber(0, 100)}`)
+        .set('Authorization', `Bearer ${token3}`);
 
       expect(response3.status).toBe(httpStatus.NOT_FOUND);
 
       const userWithOnlyEnrollment = await createUserWithOnlyEnrollment();
       const token4 = await generateValidToken(userWithOnlyEnrollment);
 
-      const response4 = await server.get(`/hotels/${generateRandomNumber(0, 100)}`).set('Authorization', `Bearer ${token4}`);
+      const response4 = await server
+        .get(`/hotels/${generateRandomNumber(0, 100)}`)
+        .set('Authorization', `Bearer ${token4}`);
 
       expect(response4.status).toBe(httpStatus.NOT_FOUND);
 
       const userWithOnlyEnrollmentAndHotel = await createUserWithOnlyEnrollmentAndHotel();
       const token5 = await generateValidToken(userWithOnlyEnrollmentAndHotel);
 
-      const response5 = await server.get(`/hotels/${generateRandomNumber(0, 100)}`).set('Authorization', `Bearer ${token5}`);
+      const response5 = await server
+        .get(`/hotels/${generateRandomNumber(0, 100)}`)
+        .set('Authorization', `Bearer ${token5}`);
 
       expect(response5.status).toBe(httpStatus.NOT_FOUND);
     });
@@ -236,7 +246,9 @@ describe('GET /hotels/:hotelId', () => {
       const randomInteger = generateRandomNumber(0, hotelWithRooms.Rooms.length - 1);
       await createBooking(user.id, hotelWithRooms.Rooms[randomInteger].id);
 
-      const response = await server.get(`/hotels/${generateRandomNumber(0, 100)}`).set('Authorization', `Bearer ${token}`);
+      const response = await server
+        .get(`/hotels/${generateRandomNumber(0, 100)}`)
+        .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(httpStatus.PAYMENT_REQUIRED);
     });
@@ -249,7 +261,9 @@ describe('GET /hotels/:hotelId', () => {
       const randomInteger = generateRandomNumber(0, hotelWithRooms.Rooms.length - 1);
       await createBooking(user.id, hotelWithRooms.Rooms[randomInteger].id);
 
-      const response = await server.get(`/hotels/${generateRandomNumber(0, 100)}`).set('Authorization', `Bearer ${token}`);
+      const response = await server
+        .get(`/hotels/${generateRandomNumber(0, 100)}`)
+        .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(httpStatus.PAYMENT_REQUIRED);
     });
@@ -262,7 +276,9 @@ describe('GET /hotels/:hotelId', () => {
       const randomInteger = generateRandomNumber(0, hotelWithRooms.Rooms.length - 1);
       await createBooking(user.id, hotelWithRooms.Rooms[randomInteger].id);
 
-      const response = await server.get(`/hotels/${generateRandomNumber(0, 100)}`).set('Authorization', `Bearer ${token}`);
+      const response = await server
+        .get(`/hotels/${generateRandomNumber(0, 100)}`)
+        .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(httpStatus.PAYMENT_REQUIRED);
     });
