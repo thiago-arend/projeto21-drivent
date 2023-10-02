@@ -3,7 +3,6 @@ import bcrypt from 'bcrypt';
 import { eventsService } from '@/services';
 import { cannotEnrollBeforeStartDateError, duplicatedEmailError, notFoundError } from '@/errors';
 import { enrollmentRepository, hotelsRepository, ticketsRepository, userRepository } from '@/repositories';
-import { boolean } from 'joi';
 import { paymentRequiredError } from '@/errors/payment-required-error';
 
 export async function createUser({ email, password }: CreateUserParams): Promise<User> {
@@ -62,13 +61,14 @@ async function validateIfUserHasEnrollmentWithPaidTicketThatIncludesHotelOrThrow
   const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
   if (!enrollment) throw paymentRequiredError();
   const ticket = await ticketsRepository.findTicketByEnrollmentId(enrollment.id);
-  if (!ticket || ticket.status !== TicketStatus.PAID || !ticket.TicketType.includesHotel || ticket.TicketType.isRemote) throw paymentRequiredError();
+  if (!ticket || ticket.status !== TicketStatus.PAID || !ticket.TicketType.includesHotel || ticket.TicketType.isRemote)
+    throw paymentRequiredError();
 }
 
 async function validateIfUserHasEnrollmentTicketAndHotelOrThrow(userId: number): Promise<void> {
-  if (!await userHasHotel(userId)) throw notFoundError();
-  if (!await userHasEnrollment(userId)) throw notFoundError();
-  if (!await userHasTicket(userId)) throw notFoundError();
+  if (!(await userHasHotel(userId))) throw notFoundError();
+  if (!(await userHasEnrollment(userId))) throw notFoundError();
+  if (!(await userHasTicket(userId))) throw notFoundError();
 }
 
 export type CreateUserParams = Pick<User, 'email' | 'password'>;

@@ -1,23 +1,23 @@
-import { HotelWithRooms } from "@/protocols";
-import { hotelsRepository } from "@/repositories";
-import { Hotel } from "@prisma/client";
-import { userService } from ".";
+import { Hotel } from '@prisma/client';
+import { userService } from '.';
+import { HotelWithRooms } from '@/protocols';
+import { hotelsRepository } from '@/repositories';
 
 export async function getHotels(userId: number): Promise<Hotel[]> {
-    await userService.validateIfUserHasEnrollmentTicketAndHotelOrThrow(userId);
-    await userService.validateIfUserHasEnrollmentWithPaidTicketThatIncludesHotelOrThrow(userId);
-    
-    const hotels = await hotelsRepository.getHotels();
+  await userService.validateIfUserHasEnrollmentTicketAndHotelOrThrow(userId);
+  await userService.validateIfUserHasEnrollmentWithPaidTicketThatIncludesHotelOrThrow(userId);
 
-    return hotels;
+  const hotels = await hotelsRepository.getHotels();
+
+  return hotels;
 }
 
 export async function getHotelWithRooms(id: number, userId: number): Promise<HotelWithRooms> {
-    await userService.validateIfUserHasEnrollmentTicketAndHotelOrThrow(userId);
-    await userService.validateIfUserHasEnrollmentWithPaidTicketThatIncludesHotelOrThrow(userId);
-    const hotelWithRooms = await hotelsRepository.getHotelWithRooms(id);
+  await userService.validateIfUserHasEnrollmentTicketAndHotelOrThrow(userId);
+  await userService.validateIfUserHasEnrollmentWithPaidTicketThatIncludesHotelOrThrow(userId);
+  const hotelWithRooms = await hotelsRepository.getHotelWithRooms(id);
 
-    return hotelWithRooms;
+  return hotelWithRooms;
 }
 
 export const hotelsService = { getHotels, getHotelWithRooms };

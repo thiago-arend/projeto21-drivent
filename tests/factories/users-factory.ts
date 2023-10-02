@@ -1,8 +1,16 @@
 import bcrypt from 'bcrypt';
 import faker from '@faker-js/faker';
 import { TicketStatus, User } from '@prisma/client';
+import {
+  createBooking,
+  createEnrollmentWithAddress,
+  createHotel,
+  createRandomTicketType,
+  createRoom,
+  createTicket,
+  createTicketType,
+} from './index';
 import { prisma } from '@/config';
-import { createBooking, createEnrollmentWithAddress, createHotel, createRandomTicketType, createRoom, createTicket, createTicketType } from './index';
 
 export async function createUser(params: Partial<User> = {}): Promise<User> {
   const incomingPassword = params.password || faker.internet.password(6);

@@ -19,7 +19,7 @@ export async function createTicketType(isRemote: boolean, includesHotel: boolean
       name: faker.name.findName(),
       price: faker.datatype.number(),
       isRemote,
-      includesHotel
+      includesHotel,
     },
   });
 }
