@@ -45,8 +45,8 @@ export async function createUserWithOnlyHotel(): Promise<User> {
 export async function createUserWithOnlyEnrollmentAndTicket(): Promise<User> {
   const user = await createUser();
   const enrollment = await createEnrollmentWithAddress(user);
-  const ticketType = await createRandomTicketType();
-  await createTicket(enrollment.id, ticketType.id, TicketStatus.RESERVED);
+  const ticketType = await createTicketType(false, true);
+  await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
 
   return user;
 }

@@ -66,20 +66,13 @@ async function validateIfUserHasEnrollmentWithPaidTicketThatIncludesHotelOrThrow
 
   if (ticket.status !== TicketStatus.PAID || !ticket.TicketType.includesHotel || ticket.TicketType.isRemote)
     throw paymentRequiredError();
-  
-  if (!(await userHasHotel(userId))) throw notFoundError();
-}
 
-async function validateIfUserHasEnrollmentTicketAndHotelOrThrow(userId: number): Promise<void> {
   if (!(await userHasHotel(userId))) throw notFoundError();
-  if (!(await userHasEnrollment(userId))) throw notFoundError();
-  if (!(await userHasTicket(userId))) throw notFoundError();
 }
 
 export type CreateUserParams = Pick<User, 'email' | 'password'>;
 
 export const userService = {
   createUser,
-  validateIfUserHasEnrollmentTicketAndHotelOrThrow,
   validateIfUserHasEnrollmentWithPaidTicketThatIncludesHotelOrThrow,
 };
