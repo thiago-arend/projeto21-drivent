@@ -2,7 +2,7 @@ import { TicketStatus, User } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import { eventsService } from '@/services';
 import { cannotEnrollBeforeStartDateError, duplicatedEmailError, notFoundError } from '@/errors';
-import { enrollmentRepository, hotelsRepository, ticketsRepository, userRepository } from '@/repositories';
+import { enrollmentRepository, ticketsRepository, userRepository } from '@/repositories';
 import { paymentRequiredError } from '@/errors/payment-required-error';
 
 export async function createUser({ email, password }: CreateUserParams): Promise<User> {
@@ -31,32 +31,6 @@ async function canEnrollOrFail() {
   }
 }
 
-async function userHasEnrollment(userId: number): Promise<boolean> {
-  const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
-
-  if (enrollment) return true;
-  return false;
-}
-
-async function userHasTicket(userId: number): Promise<boolean> {
-  const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
-  const ticket = await ticketsRepository.findTicketByEnrollmentId(enrollment.id);
-
-  if (ticket) return true;
-  return false;
-}
-
-async function userHasHotel(userId: number): Promise<boolean> {
-  const booking = await hotelsRepository.getBookingByUserId(userId);
-  if (!booking) throw notFoundError();
-  const room = await hotelsRepository.getRoom(booking.roomId);
-  if (!room) throw notFoundError();
-  const hotel = await hotelsRepository.getHotel(room.hotelId);
-
-  if (hotel) return true;
-  return false;
-}
-
 async function validateIfUserHasEnrollmentWithPaidTicketThatIncludesHotelOrThrow(userId: number): Promise<void> {
   const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
   if (!enrollment) throw notFoundError();
@@ -66,8 +40,6 @@ async function validateIfUserHasEnrollmentWithPaidTicketThatIncludesHotelOrThrow
 
   if (ticket.status !== TicketStatus.PAID || !ticket.TicketType.includesHotel || ticket.TicketType.isRemote)
     throw paymentRequiredError();
-
-  if (!(await userHasHotel(userId))) throw notFoundError();
 }
 
 export type CreateUserParams = Pick<User, 'email' | 'password'>;

@@ -61,34 +61,6 @@ describe('GET /hotels', () => {
       const response = await server.get('/hotels').set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(httpStatus.NOT_FOUND);
-
-      const userWithOnlyHotel = await createUserWithOnlyHotel();
-      const token2 = await generateValidToken(userWithOnlyHotel);
-
-      const response2 = await server.get('/hotels').set('Authorization', `Bearer ${token2}`);
-
-      expect(response2.status).toBe(httpStatus.NOT_FOUND);
-
-      const userWithOnlyEnrollmentAndTicket = await createUserWithOnlyEnrollmentAndTicket();
-      const token3 = await generateValidToken(userWithOnlyEnrollmentAndTicket);
-
-      const response3 = await server.get('/hotels').set('Authorization', `Bearer ${token3}`);
-
-      expect(response3.status).toBe(httpStatus.NOT_FOUND);
-
-      const userWithOnlyEnrollment = await createUserWithOnlyEnrollment();
-      const token4 = await generateValidToken(userWithOnlyEnrollment);
-
-      const response4 = await server.get('/hotels').set('Authorization', `Bearer ${token4}`);
-
-      expect(response4.status).toBe(httpStatus.NOT_FOUND);
-
-      const userWithOnlyEnrollmentAndHotel = await createUserWithOnlyEnrollmentAndHotel();
-      const token5 = await generateValidToken(userWithOnlyEnrollmentAndHotel);
-
-      const response5 = await server.get('/hotels').set('Authorization', `Bearer ${token5}`);
-
-      expect(response5.status).toBe(httpStatus.NOT_FOUND);
     });
 
     it("should respond with 402 if ticket hasn't been paid", async () => {
@@ -139,10 +111,6 @@ describe('GET /hotels', () => {
         hotelsWithRooms.push(await createHotelWithRoomsReturningNestedObject());
       }
 
-      const randomHotel = generateRandomNumber(0, 2);
-      const randomRoom = generateRandomNumber(0, hotelsWithRooms[randomHotel].Rooms.length - 1);
-
-      await createBooking(user.id, hotelsWithRooms[randomHotel].Rooms[randomRoom].id);
       const enrollment = await createEnrollmentWithAddress(user);
       const ticketType = await createTicketType(false, true);
       await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
@@ -200,42 +168,6 @@ describe('GET /hotels/:hotelId', () => {
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(httpStatus.NOT_FOUND);
-
-      const userWithOnlyHotel = await createUserWithOnlyHotel();
-      const token2 = await generateValidToken(userWithOnlyHotel);
-
-      const response2 = await server
-        .get(`/hotels/${generateRandomNumber(0, 100)}`)
-        .set('Authorization', `Bearer ${token2}`);
-
-      expect(response2.status).toBe(httpStatus.NOT_FOUND);
-
-      const userWithOnlyEnrollmentAndTicket = await createUserWithOnlyEnrollmentAndTicket();
-      const token3 = await generateValidToken(userWithOnlyEnrollmentAndTicket);
-
-      const response3 = await server
-        .get(`/hotels/${generateRandomNumber(0, 100)}`)
-        .set('Authorization', `Bearer ${token3}`);
-
-      expect(response3.status).toBe(httpStatus.NOT_FOUND);
-
-      const userWithOnlyEnrollment = await createUserWithOnlyEnrollment();
-      const token4 = await generateValidToken(userWithOnlyEnrollment);
-
-      const response4 = await server
-        .get(`/hotels/${generateRandomNumber(0, 100)}`)
-        .set('Authorization', `Bearer ${token4}`);
-
-      expect(response4.status).toBe(httpStatus.NOT_FOUND);
-
-      const userWithOnlyEnrollmentAndHotel = await createUserWithOnlyEnrollmentAndHotel();
-      const token5 = await generateValidToken(userWithOnlyEnrollmentAndHotel);
-
-      const response5 = await server
-        .get(`/hotels/${generateRandomNumber(0, 100)}`)
-        .set('Authorization', `Bearer ${token5}`);
-
-      expect(response5.status).toBe(httpStatus.NOT_FOUND);
     });
 
     it("should respond with 402 if ticket hasn't been paid", async () => {
@@ -297,8 +229,6 @@ describe('GET /hotels/:hotelId', () => {
         updatedAt: hotelWithRooms.updatedAt.toISOString(),
       };
 
-      const randomInteger = generateRandomNumber(0, hotelWithRoomsParsed.Rooms.length - 1);
-      await createBooking(user.id, hotelWithRoomsParsed.Rooms[randomInteger].id);
       const enrollment = await createEnrollmentWithAddress(user);
       const ticketType = await createTicketType(false, true);
       await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
