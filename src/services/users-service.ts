@@ -59,9 +59,15 @@ async function userHasHotel(userId: number): Promise<boolean> {
 
 async function validateIfUserHasEnrollmentWithPaidTicketThatIncludesHotelOrThrow(userId: number): Promise<void> {
   const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
+  if (!enrollment) throw notFoundError();
+
   const ticket = await ticketsRepository.findTicketByEnrollmentId(enrollment.id);
+  if (!ticket) throw notFoundError();
+
   if (ticket.status !== TicketStatus.PAID || !ticket.TicketType.includesHotel || ticket.TicketType.isRemote)
     throw paymentRequiredError();
+  
+  if (!(await userHasHotel(userId))) throw notFoundError();
 }
 
 async function validateIfUserHasEnrollmentTicketAndHotelOrThrow(userId: number): Promise<void> {
