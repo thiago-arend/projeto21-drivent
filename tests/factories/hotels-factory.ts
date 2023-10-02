@@ -47,8 +47,7 @@ export async function createBooking(userId: number, roomId: number) {
 
 export async function createHotelWithRooms(): Promise<Hotel> {
   const hotel = await createHotel();
-  const roomsQuantity = Math.floor(Math.random() * (50 - 30 + 1) + 30);
-  for (let i = 0; i < roomsQuantity; i++) {
+  for (let i = 0; i < 5; i++) {
     await createRoom(hotel.id);
   }
 
@@ -57,7 +56,7 @@ export async function createHotelWithRooms(): Promise<Hotel> {
 
 export async function createHotelWithRoomsReturningNestedObject(): Promise<HotelWithRooms> {
   const rooms = [];
-  for (let i = 0; i < 30; i++) {
+  for (let i = 0; i < 5; i++) {
     rooms.push(createRoomInputObject());
   }
 
