@@ -36,15 +36,6 @@ export function createRoomInputObject(): RoomInput {
   };
 }
 
-export async function createBooking(userId: number, roomId: number) {
-  return prisma.booking.create({
-    data: {
-      userId,
-      roomId,
-    },
-  });
-}
-
 export async function createHotelWithRooms(): Promise<Hotel> {
   const hotel = await createHotel();
   for (let i = 0; i < 5; i++) {

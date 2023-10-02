@@ -7,11 +7,6 @@ import {
   createUser,
   createUserWithTicket,
   createHotelWithRoomsReturningNestedObject,
-  createUserWithOnlyEnrollmentAndHotel,
-  createUserWithOnlyEnrollment,
-  createUserWithOnlyEnrollmentAndTicket,
-  createUserWithOnlyHotel,
-  createBooking,
   createEnrollmentWithAddress,
   createTicket,
   createTicketType,
@@ -67,9 +62,7 @@ describe('GET /hotels', () => {
       const user = await createUserWithTicket(false, true, false);
       const token = await generateValidToken(user);
 
-      const hotelWithRooms = await createHotelWithRoomsReturningNestedObject();
-      const randomInteger = generateRandomNumber(0, hotelWithRooms.Rooms.length - 1);
-      await createBooking(user.id, hotelWithRooms.Rooms[randomInteger].id);
+      await createHotelWithRoomsReturningNestedObject();
 
       const response = await server.get('/hotels').set('Authorization', `Bearer ${token}`);
 
@@ -80,9 +73,7 @@ describe('GET /hotels', () => {
       const user = await createUserWithTicket(true, true, true);
       const token = await generateValidToken(user);
 
-      const hotelWithRooms = await createHotelWithRoomsReturningNestedObject();
-      const randomInteger = generateRandomNumber(0, hotelWithRooms.Rooms.length - 1);
-      await createBooking(user.id, hotelWithRooms.Rooms[randomInteger].id);
+      await createHotelWithRoomsReturningNestedObject();
 
       const response = await server.get('/hotels').set('Authorization', `Bearer ${token}`);
 
@@ -93,9 +84,7 @@ describe('GET /hotels', () => {
       const user = await createUserWithTicket(false, false, true);
       const token = await generateValidToken(user);
 
-      const hotelWithRooms = await createHotelWithRoomsReturningNestedObject();
-      const randomInteger = generateRandomNumber(0, hotelWithRooms.Rooms.length - 1);
-      await createBooking(user.id, hotelWithRooms.Rooms[randomInteger].id);
+      await createHotelWithRoomsReturningNestedObject();
 
       const response = await server.get('/hotels').set('Authorization', `Bearer ${token}`);
 
@@ -174,9 +163,7 @@ describe('GET /hotels/:hotelId', () => {
       const user = await createUserWithTicket(false, true, false);
       const token = await generateValidToken(user);
 
-      const hotelWithRooms = await createHotelWithRoomsReturningNestedObject();
-      const randomInteger = generateRandomNumber(0, hotelWithRooms.Rooms.length - 1);
-      await createBooking(user.id, hotelWithRooms.Rooms[randomInteger].id);
+      await createHotelWithRoomsReturningNestedObject();
 
       const response = await server
         .get(`/hotels/${generateRandomNumber(0, 100)}`)
@@ -189,9 +176,7 @@ describe('GET /hotels/:hotelId', () => {
       const user = await createUserWithTicket(true, true, true);
       const token = await generateValidToken(user);
 
-      const hotelWithRooms = await createHotelWithRoomsReturningNestedObject();
-      const randomInteger = generateRandomNumber(0, hotelWithRooms.Rooms.length - 1);
-      await createBooking(user.id, hotelWithRooms.Rooms[randomInteger].id);
+      await createHotelWithRoomsReturningNestedObject();
 
       const response = await server
         .get(`/hotels/${generateRandomNumber(0, 100)}`)
@@ -204,9 +189,7 @@ describe('GET /hotels/:hotelId', () => {
       const user = await createUserWithTicket(false, false, true);
       const token = await generateValidToken(user);
 
-      const hotelWithRooms = await createHotelWithRoomsReturningNestedObject();
-      const randomInteger = generateRandomNumber(0, hotelWithRooms.Rooms.length - 1);
-      await createBooking(user.id, hotelWithRooms.Rooms[randomInteger].id);
+      await createHotelWithRoomsReturningNestedObject();
 
       const response = await server
         .get(`/hotels/${generateRandomNumber(0, 100)}`)
