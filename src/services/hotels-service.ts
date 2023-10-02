@@ -4,8 +4,8 @@ import { HotelWithRooms } from '@/protocols';
 import { hotelsRepository } from '@/repositories';
 
 export async function getHotels(userId: number): Promise<Hotel[]> {
-  await userService.validateIfUserHasEnrollmentTicketAndHotelOrThrow(userId);
   await userService.validateIfUserHasEnrollmentWithPaidTicketThatIncludesHotelOrThrow(userId);
+  await userService.validateIfUserHasEnrollmentTicketAndHotelOrThrow(userId);
 
   const hotels = await hotelsRepository.getHotels();
 
@@ -13,8 +13,9 @@ export async function getHotels(userId: number): Promise<Hotel[]> {
 }
 
 export async function getHotelWithRooms(id: number, userId: number): Promise<HotelWithRooms> {
-  await userService.validateIfUserHasEnrollmentTicketAndHotelOrThrow(userId);
   await userService.validateIfUserHasEnrollmentWithPaidTicketThatIncludesHotelOrThrow(userId);
+  await userService.validateIfUserHasEnrollmentTicketAndHotelOrThrow(userId);
+  
   const hotelWithRooms = await hotelsRepository.getHotelWithRooms(id);
 
   return hotelWithRooms;
