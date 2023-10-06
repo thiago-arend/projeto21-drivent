@@ -34,5 +34,5 @@ export const bookingRepository = {
     getBookingByUserId,
     createBooking,
     changeBookingRoomByUserId,
-    getBookingsCountByRoomId,
+    getBookingsCountByRoomId
 }

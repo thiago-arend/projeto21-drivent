@@ -2,7 +2,6 @@ import { notFoundError } from '@/errors';
 import { cannotCreateBookingError } from '@/errors/cannot-create-booking-error';
 import { BookingId, BookingWithRoomCleaned, CreateBookingParams } from '@/protocols';
 import { bookingRepository, enrollmentRepository, hotelRepository, ticketsRepository } from '@/repositories';
-import { parseCurrency } from '@brazilian-utils/brazilian-utils';
 import { TicketStatus } from '@prisma/client';
 
 async function getBookingByUserId(userId: number): Promise<BookingWithRoomCleaned> {
@@ -26,6 +25,14 @@ async function createBooking(userId: number, booking: CreateBookingParams): Prom
 }
 
 async function changeBookingRoomByUserId(userId: number, roomId: number): Promise<BookingId> {
+    const room = await hotelRepository.findRoom(roomId);
+    if (!room) throw notFoundError();
+
+    const booking = await bookingRepository.getBookingByUserId(userId);
+    if (!booking) throw cannotCreateBookingError();
+
+    await validateIfRoomHasAvailableSpace(roomId);
+
     const returnedBooking = await bookingRepository.changeBookingRoomByUserId(userId, roomId);
 
     return { bookingId: returnedBooking.id };
