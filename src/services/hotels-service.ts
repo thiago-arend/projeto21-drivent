@@ -1,24 +1,43 @@
-import { Hotel } from '@prisma/client';
-import { userService } from '.';
-import { HotelWithRooms } from '@/protocols';
-import { hotelsRepository } from '@/repositories';
-import { notFoundError } from '@/errors';
+import { TicketStatus } from '@prisma/client';
+import { invalidDataError, notFoundError } from '@/errors';
+import { cannotListHotelsError } from '@/errors/cannot-list-hotels-error';
+import { enrollmentRepository, hotelRepository, ticketsRepository } from '@/repositories';
 
-export async function getHotels(userId: number): Promise<Hotel[]> {
-  await userService.validateIfUserHasEnrollmentWithPaidTicketThatIncludesHotelOrThrow(userId);
+async function validateUserBooking(userId: number) {
+  const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
+  if (!enrollment) throw notFoundError();
 
-  const hotels = await hotelsRepository.getHotels();
+  const ticket = await ticketsRepository.findTicketByEnrollmentId(enrollment.id);
+  if (!ticket) throw notFoundError();
+
+  const type = ticket.TicketType;
+
+  if (ticket.status === TicketStatus.RESERVED || type.isRemote || !type.includesHotel) {
+    throw cannotListHotelsError();
+  }
+}
+
+async function getHotels(userId: number) {
+  await validateUserBooking(userId);
+
+  const hotels = await hotelRepository.findHotels();
   if (hotels.length === 0) throw notFoundError();
 
   return hotels;
 }
 
-export async function getHotelWithRooms(id: number, userId: number): Promise<HotelWithRooms> {
-  await userService.validateIfUserHasEnrollmentWithPaidTicketThatIncludesHotelOrThrow(userId);
-  const hotelWithRooms = await hotelsRepository.getHotelWithRooms(id);
+async function getHotelsWithRooms(userId: number, hotelId: number) {
+  await validateUserBooking(userId);
+
+  if (!hotelId || isNaN(hotelId)) throw invalidDataError('hotelId');
+
+  const hotelWithRooms = await hotelRepository.findRoomsByHotelId(hotelId);
   if (!hotelWithRooms) throw notFoundError();
 
   return hotelWithRooms;
 }
 
-export const hotelsService = { getHotels, getHotelWithRooms };
+export const hotelsService = {
+  getHotels,
+  getHotelsWithRooms,
+};

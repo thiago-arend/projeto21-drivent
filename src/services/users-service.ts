@@ -1,9 +1,8 @@
-import { TicketStatus, User } from '@prisma/client';
+import { User } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import { eventsService } from '@/services';
-import { cannotEnrollBeforeStartDateError, duplicatedEmailError, notFoundError } from '@/errors';
-import { enrollmentRepository, ticketsRepository, userRepository } from '@/repositories';
-import { paymentRequiredError } from '@/errors/payment-required-error';
+import { cannotEnrollBeforeStartDateError, duplicatedEmailError } from '@/errors';
+import { userRepository } from '@/repositories';
 
 export async function createUser({ email, password }: CreateUserParams): Promise<User> {
   await canEnrollOrFail();
@@ -31,20 +30,8 @@ async function canEnrollOrFail() {
   }
 }
 
-async function validateIfUserHasEnrollmentWithPaidTicketThatIncludesHotelOrThrow(userId: number): Promise<void> {
-  const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
-  if (!enrollment) throw notFoundError();
-
-  const ticket = await ticketsRepository.findTicketByEnrollmentId(enrollment.id);
-  if (!ticket) throw notFoundError();
-
-  if (ticket.status !== TicketStatus.PAID || !ticket.TicketType.includesHotel || ticket.TicketType.isRemote)
-    throw paymentRequiredError();
-}
-
 export type CreateUserParams = Pick<User, 'email' | 'password'>;
 
 export const userService = {
   createUser,
-  validateIfUserHasEnrollmentWithPaidTicketThatIncludesHotelOrThrow,
 };

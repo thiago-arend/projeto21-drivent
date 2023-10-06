@@ -1,7 +1,6 @@
 import bcrypt from 'bcrypt';
 import faker from '@faker-js/faker';
-import { TicketStatus, User } from '@prisma/client';
-import { createEnrollmentWithAddress, createTicket, createTicketType } from './index';
+import { User } from '@prisma/client';
 import { prisma } from '@/config';
 
 export async function createUser(params: Partial<User> = {}): Promise<User> {
@@ -14,13 +13,4 @@ export async function createUser(params: Partial<User> = {}): Promise<User> {
       password: hashedPassword,
     },
   });
-}
-
-export async function createUserWithTicket(isRemote: boolean, includesHotel: boolean, isPaid: boolean): Promise<User> {
-  const user = await createUser();
-  const enrollment = await createEnrollmentWithAddress(user);
-  const ticketType = await createTicketType(isRemote, includesHotel);
-  await createTicket(enrollment.id, ticketType.id, isPaid ? TicketStatus.PAID : TicketStatus.RESERVED);
-
-  return user;
 }
