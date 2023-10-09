@@ -14,3 +14,13 @@ export async function createUser(params: Partial<User> = {}): Promise<User> {
     },
   });
 }
+
+export function mockUser(): User {
+  return {
+    id: faker.datatype.number({ min: 1, max: 100 }),
+    email: faker.internet.email(),
+    password: faker.internet.password(),
+    createdAt: faker.date.soon(),
+    updatedAt: faker.date.soon(),
+  };
+}

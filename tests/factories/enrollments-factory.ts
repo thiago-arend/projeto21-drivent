@@ -1,6 +1,6 @@
 import faker from '@faker-js/faker';
 import { generateCPF, getStates } from '@brazilian-utils/brazilian-utils';
-import { User } from '@prisma/client';
+import { Address, User } from '@prisma/client';
 
 import { createUser } from './users-factory';
 import { prisma } from '@/config';
@@ -30,6 +30,35 @@ export async function createEnrollmentWithAddress(user?: User) {
       Address: true,
     },
   });
+}
+
+export function mockEnrollment(user: User) {
+  return {
+    id: faker.datatype.number({ min: 1 }),
+    name: faker.name.findName(),
+    cpf: generateCPF(),
+    birthday: faker.date.past(),
+    phone: faker.phone.phoneNumber('(##) 9####-####'),
+    userId: user.id,
+    createdAt: faker.date.soon(),
+    updatedAt: faker.date.soon(),
+  };
+}
+
+export function mockAddress(enrollmentId: number): Address {
+  return {
+    id: faker.datatype.number({ min: 1 }),
+    street: faker.address.streetName(),
+    cep: faker.address.zipCode(),
+    city: faker.address.city(),
+    neighborhood: faker.address.city(),
+    number: faker.datatype.number().toString(),
+    state: faker.helpers.arrayElement(getStates()).name,
+    enrollmentId,
+    addressDetail: faker.address.direction(),
+    createdAt: faker.date.soon(),
+    updatedAt: faker.date.soon(),
+  };
 }
 
 export function createhAddressWithCEP() {

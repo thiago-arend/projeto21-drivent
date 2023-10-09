@@ -55,17 +55,17 @@ export type CreateBookingParams = Omit<Booking, 'id' | 'createdAt' | 'updatedAt'
 export type BookingWithRoomRaw = Booking & { Room: Room };
 
 export type BookingWithRoomCleaned = {
-  id: number,
-  Room: Room
+  id: number;
+  Room: Room;
 };
 
 export type BookingId = {
-  bookingId: number
-}
+  bookingId: number;
+};
 
 export type RoomId = {
-  roomId: number
-}
+  roomId: number;
+};
 
 export type InputBookingBody = RoomId;
 
